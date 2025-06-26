@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { AptosSignatureMiddleware } from './middleware/aptos-signature.middleware';
-import { json, urlencoded } from 'express';
+import { AppModule } from './app.module.js';
+import { AptosSignatureMiddleware } from './middleware/aptos-signature.middleware.js';
+import { json, urlencoded } from 'express/index.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

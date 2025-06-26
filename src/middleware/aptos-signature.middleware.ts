@@ -4,15 +4,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { secp256k1 } from '@noble/curves/secp256k1';
-import { Buffer } from 'buffer';
-import nacl from 'tweetnacl';
 import {
-  AnyPublicKey,
-  AnySignature,
   AptosConfig,
   deserializePublicKey,
-  Deserializer,
   deserializeSignature,
   Network,
 } from '@aptos-labs/ts-sdk';

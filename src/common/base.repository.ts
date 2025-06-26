@@ -5,8 +5,8 @@ import {
   QueryOptions,
   UpdateQuery,
 } from 'mongoose';
-import { BaseSchema } from './base.schema';
-import { BaseRepositoryInterface, FindAllResponse } from './base.interface';
+import { BaseSchema } from './base.schema.js';
+import { BaseRepositoryInterface, FindAllResponse } from './base.interface.js';
 
 export abstract class BaseRepository<T extends BaseSchema>
   implements BaseRepositoryInterface<T>
