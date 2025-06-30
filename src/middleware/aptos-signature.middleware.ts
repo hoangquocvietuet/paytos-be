@@ -15,6 +15,7 @@ import {
 export class AptosSignatureMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const body = req.body;
+    console.log(body);
     const signatureHex = body.signatureHex;
     const messageHex = body.messageHex;
     const publicKeyHex = body.publicKeyHex;

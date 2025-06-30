@@ -7,7 +7,19 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
+  publicKey: string;
+
+  @IsString()
+  @IsNotEmpty()
   sendPublicKey: string;
+
+  @IsString()
+  @IsNotEmpty()
+  viewPrivateKey: string;
+
+  @IsString()
+  @IsNotEmpty()
+  viewPublicKey: string;
 }
 
 export class UpdateUsernameDto {
@@ -19,5 +31,3 @@ export class UpdateUsernameDto {
   @IsNotEmpty()
   newUsername: string;
 }
-
-
