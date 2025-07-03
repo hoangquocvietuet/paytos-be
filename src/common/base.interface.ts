@@ -3,6 +3,7 @@ import { FilterQuery, PipelineStage } from 'mongoose';
 export type FindAllResponse<T> = { count: number; items: T[] };
 
 export interface BaseRepositoryInterface<T> {
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   create(dto: T | any): Promise<T>;
 
   findOneById(id: string, projection?: string): Promise<T>;
@@ -23,6 +24,7 @@ export interface BaseRepositoryInterface<T> {
 }
 
 export interface Write<T> {
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   create(item: T | any): Promise<T>;
   update(id: string, item: Partial<T>): Promise<T>;
   remove(id: string): Promise<boolean>;

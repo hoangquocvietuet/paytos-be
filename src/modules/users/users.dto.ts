@@ -19,5 +19,3 @@ export class UpdateUsernameDto {
   @IsNotEmpty()
   newUsername: string;
 }
-
-
