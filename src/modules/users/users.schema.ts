@@ -8,7 +8,7 @@ export class User extends BaseSchema {
   username: string;
 
   @Prop({ required: true, unique: true })
-  publicKey: string;
+  publicKeyHex: string;
 
   @Prop({ required: true, unique: true })
   sendPublicKey: string;

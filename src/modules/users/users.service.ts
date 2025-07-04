@@ -19,7 +19,7 @@ export class UsersService extends BaseServiceAbstract<User> {
     const {
       username,
       sendPublicKey,
-      publicKey,
+      publicKeyHex,
       viewPrivateKey,
       viewPublicKey,
     } = createUserDto;
@@ -47,7 +47,7 @@ export class UsersService extends BaseServiceAbstract<User> {
 
     const user = {
       username,
-      publicKey,
+      publicKeyHex,
       sendPublicKey,
       viewPrivateKey,
       viewPublicKey,

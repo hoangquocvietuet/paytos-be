@@ -7,7 +7,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
-  publicKey: string;
+  publicKeyHex: string;
 
   @IsString()
   @IsNotEmpty()
