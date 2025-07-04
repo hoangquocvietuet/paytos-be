@@ -9,6 +9,7 @@ export abstract class BaseServiceAbstract<T extends BaseSchema>
 {
   constructor(private readonly repository: BaseRepositoryInterface<T>) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   async create(create_dto: T | any): Promise<T> {
     return await this.repository.create(create_dto);
   }

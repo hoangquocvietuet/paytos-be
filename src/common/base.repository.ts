@@ -5,8 +5,8 @@ import {
   QueryOptions,
   UpdateQuery,
 } from 'mongoose';
-import { BaseSchema } from './base.schema.js';
 import { BaseRepositoryInterface, FindAllResponse } from './base.interface.js';
+import { BaseSchema } from './base.schema.js';
 
 export abstract class BaseRepository<T extends BaseSchema>
   implements BaseRepositoryInterface<T>
@@ -15,6 +15,7 @@ export abstract class BaseRepository<T extends BaseSchema>
     this.model = model;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   async create(dto: T | any): Promise<T> {
     const created_data = await this.model.create(dto);
     return created_data;
@@ -125,6 +126,7 @@ export abstract class BaseRepository<T extends BaseSchema>
   }
 
   async findAdvanced(filter: PipelineStage[]): Promise<T | T[]> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await this.model.aggregate(filter).exec();
   }
 
