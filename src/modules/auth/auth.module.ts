@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -23,7 +23,7 @@ import { JwtStrategy } from './strategies/jwt.strategy.js';
       secret: env.jwt.secret,
       signOptions: { expiresIn: env.jwt.expiresIn },
     }),
-    UsersModule, // Import users module to access users service
+    forwardRef(() => UsersModule),
   ],
   controllers: [AuthController],
   providers: [

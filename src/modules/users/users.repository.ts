@@ -37,7 +37,11 @@ export class UsersRepository {
 
   async update(userId: string, updateData: Partial<User>): Promise<User> {
     await this.userRepository.update(userId, updateData);
-    return await this.findById(userId);
+    const updatedUser = await this.findById(userId);
+    if (!updatedUser) {
+      throw new Error(`User with ID ${userId} not found after update`);
+    }
+    return updatedUser;
   }
 
   async delete(userId: string): Promise<void> {
