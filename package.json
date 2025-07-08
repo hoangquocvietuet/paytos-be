@@ -17,7 +17,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm:cli": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli",
+    "migration:generate": "npm run typeorm:cli -- -d src/libs/typeorm.config.ts migration:generate src/migrations/migrations",
+    "migration:up": "npm run typeorm:cli -- -d src/libs/typeorm.config.ts migration:run",
+    "migration:down": "npm run typeorm:cli -- -d src/libs/typeorm.config.ts migration:revert"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^2.0.1",
@@ -29,11 +33,12 @@
     "@noble/curves": "^1.9.2",
     "@noble/secp256k1": "^2.3.0",
     "class-validator": "^0.14.2",
+    "express": "5.1.0",
+    "mongoose": "8.16.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "tweetnacl": "^1.0.3",
-    "express": "5.1.0",
-    "mongoose": "8.16.0"
+    "typeorm": "^0.3.25"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
