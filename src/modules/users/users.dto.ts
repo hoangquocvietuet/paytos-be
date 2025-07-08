@@ -7,15 +7,15 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
-  sendPublicKey: string;
+  aptosPublicKey: string;
 }
 
 export class UpdateUsernameDto {
   @IsString()
   @IsNotEmpty()
-  oldUsername: string;
+  userId: string;
 
   @IsString()
   @IsNotEmpty()
-  newUsername: string;
+  username: string;
 }
