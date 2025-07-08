@@ -3,11 +3,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { BaseServiceAbstract } from '../../common/base.service.js';
-import { User } from './users.schema.js';
-import { UserRepository } from './users.repository.js';
-import { CreateUserDto, UpdateUsernameDto } from './users.dto.js';
+
 import { SingleKeyAccount } from '@aptos-labs/ts-sdk';
+
+import { BaseServiceAbstract } from '../../common/base.service.js';
+
+import { CreateUserDto, UpdateUsernameDto } from './users.dto.js';
+import { UserRepository } from './users.repository.js';
+import { User } from './users.schema.js';
 
 @Injectable()
 export class UsersService extends BaseServiceAbstract<User> {

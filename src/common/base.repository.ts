@@ -5,6 +5,7 @@ import {
   QueryOptions,
   UpdateQuery,
 } from 'mongoose';
+
 import { BaseRepositoryInterface, FindAllResponse } from './base.interface.js';
 import { BaseSchema } from './base.schema.js';
 

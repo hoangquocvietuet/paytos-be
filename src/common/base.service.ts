@@ -1,8 +1,8 @@
-import { BaseSchema } from './base.schema.js';
 import {
   BaseRepositoryInterface,
   BaseServiceInterface,
 } from './base.interface.js';
+import { BaseSchema } from './base.schema.js';
 
 export abstract class BaseServiceAbstract<T extends BaseSchema>
   implements BaseServiceInterface<T>

@@ -1,5 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { json, urlencoded } from 'express/index.js';
+
+import { json, urlencoded } from 'express';
+
 import { AppModule } from './app.module.js';
 import { AptosSignatureMiddleware } from './middleware/aptos-signature.middleware.js';
 

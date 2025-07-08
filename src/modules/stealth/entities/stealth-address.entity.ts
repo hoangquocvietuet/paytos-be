@@ -7,8 +7,9 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { MetaAddress } from './meta-address.entity';
+
 import { EphemeralKey } from './ephemeral-key.entity';
+import { MetaAddress } from './meta-address.entity';
 import { Transaction } from './transaction.entity';
 
 @Entity('stealth_addresses')

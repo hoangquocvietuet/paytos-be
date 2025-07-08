@@ -6,6 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+
 import { StealthAddress } from './stealth-address.entity';
 
 @Entity('ephemeral_keys')

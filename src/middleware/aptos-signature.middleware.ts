@@ -1,14 +1,15 @@
 import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
+
+import {
   AptosConfig,
   deserializePublicKey,
   deserializeSignature,
   Network,
 } from '@aptos-labs/ts-sdk';
-import {
-  Injectable,
-  NestMiddleware,
-  UnauthorizedException,
-} from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 
 interface AptosSignatureBody {

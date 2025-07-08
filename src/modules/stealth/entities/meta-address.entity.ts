@@ -7,7 +7,9 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
+
 import { User } from 'src/modules/users/entities/user.entity';
+
 import { StealthAddress } from './stealth-address.entity';
 
 @Entity('meta_addresses')

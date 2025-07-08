@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+
 import { MetaAddress } from 'src/modules/stealth/entities/meta-address.entity';
 
 @Entity('users')

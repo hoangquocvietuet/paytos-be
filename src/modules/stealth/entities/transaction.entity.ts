@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+
 import { StealthAddress } from './stealth-address.entity';
 
 export enum Direction {
