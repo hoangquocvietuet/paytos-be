@@ -19,11 +19,34 @@ async function bootstrap() {
   if (env.app.env !== 'production') {
     const swaggerConfig = new DocumentBuilder()
       .setTitle('Paytos Backend API')
+      .setVersion('1.0.0')
+      .addBearerAuth({
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Enter JWT token',
+        in: 'header',
+      })
+      .addTag(
+        'Authentication',
+        'User registration, login, and nonce generation',
+      )
+      .addTag('Users', 'User management and profile operations')
       .build();
 
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('swagger', app, swaggerDocument, {
       jsonDocumentUrl: 'swagger/json',
+      customSiteTitle: 'Paytos API Documentation',
+      customfavIcon: 'https://nestjs.com/img/logo_text.svg',
+      customJs: [
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js',
+      ],
+      customCssUrl: [
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
+      ],
     });
   }
 
