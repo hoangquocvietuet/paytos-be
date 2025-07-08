@@ -1,11 +1,11 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
-  JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { EphemeralKey } from './ephemeral-key.entity';
@@ -27,7 +27,7 @@ export class StealthAddress {
   @Column({ type: 'smallint', nullable: true })
   viewTag: number;
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @OneToMany(() => EphemeralKey, (eph) => eph.stealthAddress)
