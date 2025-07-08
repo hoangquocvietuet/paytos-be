@@ -82,4 +82,30 @@ export class UsersService {
 
     return await this.usersRepository.update(userId, { username });
   }
+
+  // New method for profile updates
+  async updateProfile(
+    userId: string,
+    username: string,
+  ): Promise<{ username: string; updatedAt: Date }> {
+    // Check if user exists
+    await this.findById(userId);
+
+    // Check if new username is already taken
+    const existingUserWithUsername =
+      await this.usersRepository.findByUsername(username);
+    if (
+      existingUserWithUsername &&
+      existingUserWithUsername.userId !== userId
+    ) {
+      throw new BadRequestException(`Username ${username} is already taken`);
+    }
+
+    const updatedUser = await this.usersRepository.update(userId, { username });
+
+    return {
+      username: updatedUser.username,
+      updatedAt: updatedUser.updatedAt,
+    };
+  }
 }

@@ -19,3 +19,10 @@ export class UpdateUsernameDto {
   @IsNotEmpty()
   username: string;
 }
+
+// New DTO for profile updates - only requires username since userId comes from JWT
+export class UpdateProfileDto {
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+}
