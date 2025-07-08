@@ -1,11 +1,11 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
-  JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { User } from 'src/modules/users/entities/user.entity';
@@ -33,7 +33,7 @@ export class MetaAddress {
   @Column('text')
   spendPrivateEncrypted: string;
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @OneToMany(() => StealthAddress, (stealth) => stealth.metaAddress)

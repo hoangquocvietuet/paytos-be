@@ -1,10 +1,10 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { MetaAddress } from 'src/modules/stealth/entities/meta-address.entity';
@@ -20,10 +20,10 @@ export class User {
   @Column({ length: 64 })
   aptosPublicKey: string;
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamptz' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
   @OneToMany(() => MetaAddress, (meta) => meta.user)

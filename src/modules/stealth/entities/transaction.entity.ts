@@ -1,9 +1,9 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
+  Entity,
   JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { StealthAddress } from './stealth-address.entity';
@@ -31,7 +31,7 @@ export class Transaction {
   @Column({ length: 66 })
   txHash: string;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamp' })
   timestamp: Date;
 
   @Column({ type: 'enum', enum: Direction })
