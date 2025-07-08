@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { env } from '../../config/index.js';
 import { UsersModule } from '../users/users.module.js';
 
 import { AuthController } from './auth.controller.js';
@@ -19,8 +20,8 @@ import { JwtStrategy } from './strategies/jwt.strategy.js';
     TypeOrmModule.forFeature([Nonce]),
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key', // Use env variable in production
-      signOptions: { expiresIn: '24h' },
+      secret: env.jwt.secret,
+      signOptions: { expiresIn: env.jwt.expiresIn },
     }),
     UsersModule, // Import users module to access users service
   ],

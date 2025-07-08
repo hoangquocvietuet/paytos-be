@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
+import { env } from '../../../config/index.js';
 import { UsersService } from '../../users/users.service.js';
 
 export interface JwtPayload {
@@ -19,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'your-secret-key', // Use env variable in production
+      secretOrKey: env.jwt.secret,
     });
   }
 

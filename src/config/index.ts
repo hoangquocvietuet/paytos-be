@@ -12,6 +12,10 @@ function loadConfig() {
       url:
         process.env.DATABASE_URL || 'mysql://root:root@localhost:3307/paytos',
     },
+    jwt: {
+      secret: process.env.JWT_SECRET || 'your-secret-key',
+      expiresIn: process.env.JWT_EXPIRES_IN || '24h',
+    },
   };
 
   return config;
