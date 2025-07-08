@@ -32,6 +32,12 @@ export class AptosSignatureGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const body = request.body as AptosSignatureBody;
 
+    if (!body) {
+      throw new UnauthorizedException(
+        'Missing signature, public key, or message',
+      );
+    }
+
     const { signatureHex, messageHex, publicKeyHex } = body;
 
     if (!signatureHex || !messageHex || !publicKeyHex) {
@@ -59,6 +65,9 @@ export class AptosSignatureGuard implements CanActivate {
 
       return true;
     } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
       throw new UnauthorizedException('Signature verification failed');
     }
   }
