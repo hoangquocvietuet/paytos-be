@@ -16,7 +16,13 @@ export class UsersService extends BaseServiceAbstract<User> {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    const { username, sendPublicKey } = createUserDto;
+    const {
+      username,
+      sendPublicKey,
+      publicKeyHex,
+      viewPrivateKey,
+      viewPublicKey,
+    } = createUserDto;
 
     const existingUserWithSendPublicKey =
       await this.userRepository.findOneByCondition({
@@ -39,17 +45,14 @@ export class UsersService extends BaseServiceAbstract<User> {
       );
     }
 
-    const account = SingleKeyAccount.generate();
     const user = {
       username,
+      publicKeyHex,
       sendPublicKey,
-      viewPrivateKey: account.privateKey,
-      viewPublicKey: account.publicKey,
+      viewPrivateKey,
+      viewPublicKey,
     };
     await this.userRepository.create(user);
-    return {
-      viewPublicKey: account.publicKey,
-    };
   }
 
   async updateUsername(updateUsernameDto: UpdateUsernameDto) {

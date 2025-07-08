@@ -20,10 +20,11 @@ interface AptosSignatureBody {
 @Injectable()
 export class AptosSignatureMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
-    const body = req.body as AptosSignatureBody;
-    const signatureHex: string = body.signatureHex;
-    const messageHex: string = body.messageHex;
-    const publicKeyHex: string = body.publicKeyHex;
+    const body = req.body;
+    const signatureHex = body.signatureHex;
+    const messageHex = body.messageHex;
+    const publicKeyHex = body.publicKeyHex;
+
 
     if (!signatureHex || !messageHex || !publicKeyHex) {
       throw new UnauthorizedException(
