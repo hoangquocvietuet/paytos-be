@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'express';
 
 import { AppModule } from './app.module.js';
-import { AptosSignatureMiddleware } from './middleware/aptos-signature.middleware.js';
+import { env } from './config/index.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,10 +15,7 @@ async function bootstrap() {
   app.use(json({ limit: '100mb' }));
   app.use(urlencoded({ extended: true, limit: '100mb' }));
 
-  const aptosMiddleware = new AptosSignatureMiddleware();
-  app.use(aptosMiddleware.use.bind(aptosMiddleware));
-
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(env.app.port);
 }
 
 bootstrap().catch((error) =>

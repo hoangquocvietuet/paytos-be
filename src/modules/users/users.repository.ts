@@ -1,18 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { Model } from 'mongoose';
+import { Repository } from 'typeorm';
 
-import { BaseRepository } from '../../common/base.repository.js';
-
-import { User } from './users.schema.js';
+import { User } from './entities/user.entity.js';
 
 @Injectable()
-export class UserRepository extends BaseRepository<User> {
+export class UsersRepository {
   constructor(
-    @InjectModel(User.name)
-    private readonly userModel: Model<User>,
-  ) {
-    super(userModel);
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async create(userData: Partial<User>): Promise<User> {
+    const user = this.userRepository.create(userData);
+    return await this.userRepository.save(user);
+  }
+
+  async findById(userId: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { userId },
+    });
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { username },
+    });
+  }
+
+  async findByAptosPublicKey(aptosPublicKey: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { aptosPublicKey },
+    });
+  }
+
+  async update(userId: string, updateData: Partial<User>): Promise<User> {
+    await this.userRepository.update(userId, updateData);
+    return await this.findById(userId);
+  }
+
+  async delete(userId: string): Promise<void> {
+    await this.userRepository.delete(userId);
   }
 }
