@@ -17,7 +17,7 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column({ length: 64 })
+  @Column({ length: 66 })
   aptosPublicKey: string;
 
   @CreateDateColumn({ type: 'timestamp' })

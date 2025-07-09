@@ -71,9 +71,22 @@ export class NonceService {
     return true;
   }
 
+  // Return string for client display
   getNonceMessage(nonce: string): string {
-    // Standard message format for Aptos authentication
     return `Sign this message to authenticate with nonce: ${nonce}`;
+  }
+
+  // Return binary data for signature verification
+  getNonceMessageBytes(nonce: string): Uint8Array {
+    const message = `Sign this message to authenticate with nonce: ${nonce}`;
+    return new TextEncoder().encode(message);
+  }
+
+  // Alternative: Use just the nonce as the message (more secure)
+  getNonceAsMessage(nonce: string): Uint8Array {
+    // Remove '0x' prefix if present and convert hex to bytes
+    const cleanNonce = nonce.startsWith('0x') ? nonce.slice(2) : nonce;
+    return new Uint8Array(Buffer.from(cleanNonce, 'hex'));
   }
 
   private async cleanupExpiredNonces(): Promise<void> {
