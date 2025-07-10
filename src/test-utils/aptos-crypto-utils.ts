@@ -42,6 +42,6 @@ console.log('Public Key:', publicKey);
 
 const signature = AptosCryptoUtils.signMessage(
   env.wallet.privateKey,
-  'Sign this message to authenticate with nonce: eadb8ff03ff0fd6a4878386080df48e4e7a94967924fbc7119c711cd8594e0f7',
+  'Sign this message to authenticate with nonce: 046ed98559d7e1aeae4a3a3431a41af0f42b44954ea9906194024826d90d290e',
 );
 console.log('Signature:', signature);
