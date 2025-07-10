@@ -26,6 +26,8 @@ import {
   GetMetaAddressesResponseDto,
   GetStealthAddressesQueryDto,
   GetStealthAddressesResponseDto,
+  GetStealthAddressParamsDto,
+  StealthAddressResponseDto,
 } from './stealth.dto.js';
 import { StealthService } from './stealth.service.js';
 
@@ -116,6 +118,44 @@ export class StealthController {
     return await this.stealthService.getUserStealthAddresses(
       user.userId,
       query,
+    );
+  }
+
+  @Get('addresses/:address')
+  @ApiOperation({
+    summary: 'Get Stealth Address Details',
+    description:
+      'Fetch metadata about one stealth address (for e.g. showing which meta-address spawned it).',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Stealth address details retrieved successfully',
+    type: StealthAddressResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Stealth address not found or does not belong to user',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid address format',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error during retrieval',
+  })
+  async getStealthAddressByAddress(
+    @Request() req,
+    @Param() params: GetStealthAddressParamsDto,
+  ): Promise<StealthAddressResponseDto> {
+    const user = req.user;
+    return await this.stealthService.getStealthAddressByAddress(
+      user.userId,
+      params.address,
     );
   }
 

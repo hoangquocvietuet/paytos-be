@@ -1,7 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { Type } from 'class-transformer';
-import { IsOptional, IsPositive, IsUUID, Max } from 'class-validator';
+import {
+  IsOptional,
+  IsPositive,
+  IsString,
+  IsUUID,
+  Matches,
+  Max,
+} from 'class-validator';
 
 export class CreateMetaAddressResponseDto {
   @ApiProperty({
@@ -167,4 +174,19 @@ export class GetStealthAddressesResponseDto {
     total: number;
     totalPages: number;
   };
+}
+
+export class GetStealthAddressParamsDto {
+  @ApiProperty({
+    description: 'On-chain stealth address (hex format)',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+    pattern: '^0x[0-9a-fA-F]{64}$',
+  })
+  @IsString()
+  @Matches(/^0x[0-9a-fA-F]{64}$/, {
+    message:
+      'Address must be a valid hex string with 0x prefix (66 characters total)',
+  })
+  address: string;
 }

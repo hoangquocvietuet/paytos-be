@@ -212,6 +212,50 @@ export class StealthService {
   }
 
   /**
+   * Get a specific stealth address by address for a user
+   */
+  async getStealthAddressByAddress(
+    userId: string,
+    address: string,
+  ): Promise<StealthAddressResponseDto> {
+    try {
+      const stealthAddress = await this.stealthAddressRepository.findOne({
+        where: {
+          address,
+          metaAddress: {
+            user: { userId },
+          },
+        },
+        relations: ['metaAddress', 'metaAddress.user'],
+        select: {
+          stealthId: true,
+          address: true,
+          viewTag: true,
+          createdAt: true,
+          metaAddress: {
+            metaId: true,
+          },
+        },
+      });
+
+      if (!stealthAddress) {
+        throw new NotFoundException(
+          'Stealth address not found or does not belong to user',
+        );
+      }
+
+      return this.mapToStealthAddressDto(stealthAddress);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Failed to retrieve stealth address: ${error.message}`,
+      );
+    }
+  }
+
+  /**
    * Generate an Ed25519 keypair using Aptos SDK
    */
   private generateKeyPair(): { privateKey: string; publicKey: string } {
