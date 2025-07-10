@@ -13,6 +13,7 @@ import { User } from '../users/entities/user.entity.js';
 
 import { MetaAddress } from './entities/meta-address.entity.js';
 import { StealthAddress } from './entities/stealth-address.entity.js';
+import { Transaction } from './entities/transaction.entity.js';
 import {
   CreateMetaAddressResponseDto,
   GetMetaAddressesQueryDto,
@@ -20,6 +21,7 @@ import {
   GetStealthAddressesQueryDto,
   GetStealthAddressesResponseDto,
   StealthAddressResponseDto,
+  TransactionResponseDto,
 } from './stealth.dto.js';
 
 @Injectable()
@@ -29,6 +31,8 @@ export class StealthService {
     private readonly metaAddressRepository: Repository<MetaAddress>,
     @InjectRepository(StealthAddress)
     private readonly stealthAddressRepository: Repository<StealthAddress>,
+    @InjectRepository(Transaction)
+    private readonly transactionRepository: Repository<Transaction>,
     private readonly encryptionService: EncryptionService,
   ) {}
 
@@ -256,6 +260,62 @@ export class StealthService {
   }
 
   /**
+   * Get transactions for a specific stealth address
+   */
+  async getStealthAddressTransactions(
+    userId: string,
+    address: string,
+  ): Promise<TransactionResponseDto[]> {
+    try {
+      // First, resolve the stealth address and verify ownership
+      const stealthAddress = await this.stealthAddressRepository.findOne({
+        where: {
+          address,
+          metaAddress: {
+            user: { userId },
+          },
+        },
+        relations: ['metaAddress', 'metaAddress.user'],
+        select: {
+          stealthId: true,
+        },
+      });
+
+      if (!stealthAddress) {
+        throw new NotFoundException(
+          'Stealth address not found or does not belong to user',
+        );
+      }
+
+      // Fetch transactions for this stealth address
+      const transactions = await this.transactionRepository.find({
+        where: { stealthAddress: { stealthId: stealthAddress.stealthId } },
+        order: { timestamp: 'DESC' }, // Most recent first
+        select: [
+          'txHash',
+          'timestamp',
+          'direction',
+          'assetType',
+          'tokenAddress',
+          'tokenId',
+          'amount',
+        ],
+      });
+
+      return transactions.map((transaction) =>
+        this.mapToTransactionDto(transaction),
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Failed to retrieve transactions: ${error.message}`,
+      );
+    }
+  }
+
+  /**
    * Generate an Ed25519 keypair using Aptos SDK
    */
   private generateKeyPair(): { privateKey: string; publicKey: string } {
@@ -298,6 +358,23 @@ export class StealthService {
       viewTag: stealthAddress.viewTag,
       createdAt: stealthAddress.createdAt.toISOString(),
       metaId: stealthAddress.metaAddress.metaId,
+    };
+  }
+
+  /**
+   * Map Transaction entity to response DTO
+   */
+  private mapToTransactionDto(
+    transaction: Transaction,
+  ): TransactionResponseDto {
+    return {
+      txHash: transaction.txHash,
+      timestamp: transaction.timestamp.toISOString(),
+      direction: transaction.direction,
+      assetType: transaction.assetType,
+      tokenAddress: transaction.tokenAddress || null,
+      tokenId: transaction.tokenId || null,
+      amount: transaction.amount ? transaction.amount.toString() : null,
     };
   }
 }

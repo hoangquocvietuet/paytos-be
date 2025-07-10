@@ -27,7 +27,9 @@ import {
   GetStealthAddressesQueryDto,
   GetStealthAddressesResponseDto,
   GetStealthAddressParamsDto,
+  GetStealthAddressTransactionsParamsDto,
   StealthAddressResponseDto,
+  TransactionResponseDto,
 } from './stealth.dto.js';
 import { StealthService } from './stealth.service.js';
 
@@ -154,6 +156,43 @@ export class StealthController {
   ): Promise<StealthAddressResponseDto> {
     const user = req.user;
     return await this.stealthService.getStealthAddressByAddress(
+      user.userId,
+      params.address,
+    );
+  }
+
+  @Get('addresses/:address/transactions')
+  @ApiOperation({
+    summary: 'Get Stealth Address Transactions',
+    description: 'Show the ledger of transfers in/out of a stealth address.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Transactions retrieved successfully',
+    type: [TransactionResponseDto],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Stealth address not found or does not belong to user',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid address format',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error during retrieval',
+  })
+  async getStealthAddressTransactions(
+    @Request() req,
+    @Param() params: GetStealthAddressTransactionsParamsDto,
+  ): Promise<TransactionResponseDto[]> {
+    const user = req.user;
+    return await this.stealthService.getStealthAddressTransactions(
       user.userId,
       params.address,
     );

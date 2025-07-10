@@ -190,3 +190,72 @@ export class GetStealthAddressParamsDto {
   })
   address: string;
 }
+
+export class GetStealthAddressTransactionsParamsDto {
+  @ApiProperty({
+    description: 'On-chain stealth address (hex format)',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+    pattern: '^0x[0-9a-fA-F]{64}$',
+  })
+  @IsString()
+  @Matches(/^0x[0-9a-fA-F]{64}$/, {
+    message:
+      'Address must be a valid hex string with 0x prefix (66 characters total)',
+  })
+  address: string;
+}
+
+export class TransactionResponseDto {
+  @ApiProperty({
+    description: 'Transaction hash (hex format)',
+    example:
+      '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12',
+    pattern: '^0x[0-9a-fA-F]{66}$',
+  })
+  txHash: string;
+
+  @ApiProperty({
+    description: 'ISO 8601 timestamp when the transaction occurred',
+    example: '2024-01-15T10:30:00.000Z',
+  })
+  timestamp: string;
+
+  @ApiProperty({
+    description: 'Direction of the transaction',
+    enum: ['IN', 'OUT'],
+    example: 'IN',
+  })
+  direction: 'IN' | 'OUT';
+
+  @ApiProperty({
+    description: 'Type of asset transferred',
+    enum: ['coin', 'ft', 'nft'],
+    example: 'coin',
+  })
+  assetType: 'coin' | 'ft' | 'nft';
+
+  @ApiProperty({
+    description: 'Token contract address (for FT/NFT)',
+    example: '0xabcdef1234567890abcdef1234567890abcdef12',
+    required: false,
+    nullable: true,
+  })
+  tokenAddress?: string | null;
+
+  @ApiProperty({
+    description: 'Token ID (for NFT)',
+    example: '12345',
+    required: false,
+    nullable: true,
+  })
+  tokenId?: string | null;
+
+  @ApiProperty({
+    description: 'Amount transferred (as string to preserve precision)',
+    example: '1000000000',
+    required: false,
+    nullable: true,
+  })
+  amount?: string | null;
+}
