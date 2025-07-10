@@ -8,7 +8,11 @@ import { EncryptionService } from '../../common/encryption.service.js';
 import { User } from '../users/entities/user.entity.js';
 
 import { MetaAddress } from './entities/meta-address.entity.js';
-import { CreateMetaAddressResponseDto } from './stealth.dto.js';
+import {
+  CreateMetaAddressResponseDto,
+  GetMetaAddressesQueryDto,
+  GetMetaAddressesResponseDto,
+} from './stealth.dto.js';
 
 @Injectable()
 export class StealthService {
@@ -48,15 +52,57 @@ export class StealthService {
         await this.metaAddressRepository.save(metaAddress);
 
       // Return only public information
-      return {
-        metaId: savedMetaAddress.metaId,
-        scanPublic: savedMetaAddress.scanPublic,
-        spendPublic: savedMetaAddress.spendPublic,
-        createdAt: savedMetaAddress.createdAt.toISOString(),
-      };
+      return this.mapToPublicDto(savedMetaAddress);
     } catch (error) {
       throw new InternalServerErrorException(
         `Failed to create meta-address: ${error.message}`,
+      );
+    }
+  }
+
+  /**
+   * Get all meta-addresses for a user with pagination
+   */
+  async getUserMetaAddresses(
+    userId: string,
+    query: GetMetaAddressesQueryDto,
+  ): Promise<GetMetaAddressesResponseDto> {
+    try {
+      const { page = 1, limit = 10 } = query;
+      const skip = (page - 1) * limit;
+
+      // Get total count for pagination
+      const [metaAddresses, total] =
+        await this.metaAddressRepository.findAndCount({
+          where: { user: { userId } },
+          order: { createdAt: 'DESC' }, // Most recent first
+          skip,
+          take: limit,
+          select: [
+            'metaId',
+            'scanPublic',
+            'spendPublic',
+            'createdAt',
+            // Explicitly omit scanPrivateEncrypted and spendPrivateEncrypted
+          ],
+        });
+
+      const totalPages = Math.ceil(total / limit);
+
+      return {
+        data: metaAddresses.map((metaAddress) =>
+          this.mapToPublicDto(metaAddress),
+        ),
+        meta: {
+          page,
+          limit,
+          total,
+          totalPages,
+        },
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to retrieve meta-addresses: ${error.message}`,
       );
     }
   }
@@ -79,12 +125,16 @@ export class StealthService {
   }
 
   /**
-   * Get all meta-addresses for a user (for testing/admin purposes)
+   * Map MetaAddress entity to public DTO (strips private fields)
    */
-  async getUserMetaAddresses(userId: string): Promise<MetaAddress[]> {
-    return await this.metaAddressRepository.find({
-      where: { user: { userId } },
-      relations: ['user'],
-    });
+  private mapToPublicDto(
+    metaAddress: MetaAddress,
+  ): CreateMetaAddressResponseDto {
+    return {
+      metaId: metaAddress.metaId,
+      scanPublic: metaAddress.scanPublic,
+      spendPublic: metaAddress.spendPublic,
+      createdAt: metaAddress.createdAt.toISOString(),
+    };
   }
 }

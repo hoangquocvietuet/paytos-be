@@ -1,4 +1,11 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -8,7 +15,11 @@ import {
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
-import { CreateMetaAddressResponseDto } from './stealth.dto.js';
+import {
+  CreateMetaAddressResponseDto,
+  GetMetaAddressesQueryDto,
+  GetMetaAddressesResponseDto,
+} from './stealth.dto.js';
 import { StealthService } from './stealth.service.js';
 
 @ApiTags('Stealth')
@@ -42,5 +53,32 @@ export class StealthController {
   ): Promise<CreateMetaAddressResponseDto> {
     const user = req.user;
     return await this.stealthService.createMetaAddress(user);
+  }
+
+  @Get('meta')
+  @ApiOperation({
+    summary: 'Get User Meta-Addresses',
+    description:
+      'Show all meta-addresses (scan/spend public keys) that a user has generated.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Meta-addresses retrieved successfully',
+    type: GetMetaAddressesResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error during retrieval',
+  })
+  async getUserMetaAddresses(
+    @Request() req,
+    @Query() query: GetMetaAddressesQueryDto,
+  ): Promise<GetMetaAddressesResponseDto> {
+    const user = req.user;
+    return await this.stealthService.getUserMetaAddresses(user.userId, query);
   }
 }
