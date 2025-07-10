@@ -21,10 +21,10 @@ export class MetaAddress {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ length: 64 })
+  @Column({ length: 66 })
   scanPublic: string;
 
-  @Column({ length: 64 })
+  @Column({ length: 66 })
   spendPublic: string;
 
   @Column('text')

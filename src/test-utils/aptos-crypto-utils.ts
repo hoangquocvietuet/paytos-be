@@ -9,8 +9,6 @@ class AptosCryptoUtils {
    * Derive public key from private key
    */
   static getPublicKey(privateKeyHex: string): string {
-    console.log('Private Key:', privateKeyHex);
-
     if (!privateKeyHex || privateKeyHex.trim() === '') {
       throw new Error('Private key cannot be empty');
     }
@@ -42,6 +40,6 @@ console.log('Public Key:', publicKey);
 
 const signature = AptosCryptoUtils.signMessage(
   env.wallet.privateKey,
-  'Sign this message to authenticate with nonce: 046ed98559d7e1aeae4a3a3431a41af0f42b44954ea9906194024826d90d290e',
+  'Sign this message to authenticate with nonce: e7fdc7e5cd819ba5e8aedbede38dce803e4d5182a8a9b7ef0c31863c6a1285b7',
 );
 console.log('Signature:', signature);

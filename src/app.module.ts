@@ -6,6 +6,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import dataSource from './libs/typeORM.config.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { StealthModule } from './modules/stealth/stealth.module.js';
 import { UsersModule } from './modules/users/users.module.js';
 
 @Module({
@@ -14,8 +15,9 @@ import { UsersModule } from './modules/users/users.module.js';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(dataSource.options),
-    UsersModule,
     AuthModule,
+    UsersModule,
+    StealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
