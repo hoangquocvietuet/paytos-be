@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 
 import { User } from './entities/user.entity.js';
-import { CreateUserDto, UpdateUsernameDto } from './users.dto.js';
+import { CreateUserDto } from './users.dto.js';
 import { UsersRepository } from './users.repository.js';
 
 @Injectable()
@@ -64,23 +64,26 @@ export class UsersService {
     return user;
   }
 
-  async updateUsername(updateUsernameDto: UpdateUsernameDto): Promise<User> {
-    const { userId, username } = updateUsernameDto;
-
-    // Check if user exists
-    await this.findById(userId);
-
-    // Check if new username is already taken
-    const existingUserWithUsername =
-      await this.usersRepository.findByUsername(username);
-    if (
-      existingUserWithUsername &&
-      existingUserWithUsername.userId !== userId
-    ) {
-      throw new BadRequestException(`Username ${username} is already taken`);
+  async updateUsername(userId: string, newUsername: string) {
+    // Check if username is already taken
+    const existingUser = await this.usersRepository.findByUsername(newUsername);
+    if (existingUser && existingUser.userId !== userId) {
+      throw new BadRequestException('Username already exists');
     }
 
-    return await this.usersRepository.update(userId, { username });
+    // Update the username
+    const updatedUser = await this.usersRepository.update(userId, {
+      username: newUsername,
+    });
+
+    return {
+      message: 'Username updated successfully',
+      user: {
+        userId: updatedUser.userId,
+        username: updatedUser.username,
+        aptosPublicKey: updatedUser.aptosPublicKey,
+      },
+    };
   }
 
   // New method for profile updates

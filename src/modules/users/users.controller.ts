@@ -1,17 +1,14 @@
-import { Body, Controller, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Put, Request, UseGuards } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiBody,
   ApiOperation,
   ApiResponse,
   ApiTags,
-  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import { CombinedAuthGuard } from '../auth/guards/combined-auth.guard.js';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js'; // Use simple JWT guard
 
-import { UpdateUsernameDto, UserResponse } from './users.dto.js';
+import { UpdateUsernameDto } from './users.dto.js';
 import { UsersService } from './users.service.js';
 
 @ApiTags('Users')
@@ -19,28 +16,33 @@ import { UsersService } from './users.service.js';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @ApiOperation({
-    summary: 'Update username (high security)',
-    description:
-      'Updates username with enhanced security requiring both JWT token and fresh Aptos signature verification.',
-  })
-  @ApiBody({ type: UpdateUsernameDto })
+  @Put('username')
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Update Username',
+    description: 'Updates username with JWT authentication.',
+  })
   @ApiResponse({
     status: 200,
     description: 'Username updated successfully',
-    type: UserResponse,
   })
-  @ApiBadRequestResponse({
-    description:
-      'Username already exists, invalid signature, or invalid input data',
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
   })
-  @ApiUnauthorizedResponse({
-    description: 'JWT token missing/invalid or signature verification failed',
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input or username already exists',
   })
-  @UseGuards(CombinedAuthGuard)
-  @Put('username')
-  async updateUsername(@Body() updateUsernameDto: UpdateUsernameDto) {
-    return await this.usersService.updateUsername(updateUsernameDto);
+  async updateUsername(
+    @Request() req,
+    @Body() updateUsernameDto: UpdateUsernameDto,
+  ) {
+    const user = req.user;
+    return await this.usersService.updateUsername(
+      user.userId,
+      updateUsernameDto.username,
+    );
   }
 }
