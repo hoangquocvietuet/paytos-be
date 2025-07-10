@@ -259,3 +259,41 @@ export class TransactionResponseDto {
   })
   amount?: string | null;
 }
+
+export class GetStealthAddressBalanceParamsDto {
+  @ApiProperty({
+    description: 'On-chain stealth address (hex format)',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+    pattern: '^0x[0-9a-fA-F]{64}$',
+  })
+  @IsString()
+  @Matches(/^0x[0-9a-fA-F]{64}$/, {
+    message:
+      'Address must be a valid hex string with 0x prefix (66 characters total)',
+  })
+  address: string;
+}
+
+export class BalanceResponseDto {
+  @ApiProperty({
+    description: 'Type of asset',
+    enum: ['coin', 'ft', 'nft'],
+    example: 'coin',
+  })
+  assetType: 'coin' | 'ft' | 'nft';
+
+  @ApiProperty({
+    description: 'Token contract address (null for native coin)',
+    example: '0xabcdef1234567890abcdef1234567890abcdef12',
+    required: false,
+    nullable: true,
+  })
+  tokenAddress?: string | null;
+
+  @ApiProperty({
+    description: 'Net balance (as string to preserve precision)',
+    example: '1500000000',
+  })
+  balance: string;
+}

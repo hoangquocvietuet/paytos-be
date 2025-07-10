@@ -20,10 +20,12 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
 import {
+  BalanceResponseDto,
   CreateMetaAddressResponseDto,
   DeleteMetaAddressParamsDto,
   GetMetaAddressesQueryDto,
   GetMetaAddressesResponseDto,
+  GetStealthAddressBalanceParamsDto,
   GetStealthAddressesQueryDto,
   GetStealthAddressesResponseDto,
   GetStealthAddressParamsDto,
@@ -193,6 +195,43 @@ export class StealthController {
   ): Promise<TransactionResponseDto[]> {
     const user = req.user;
     return await this.stealthService.getStealthAddressTransactions(
+      user.userId,
+      params.address,
+    );
+  }
+
+  @Get('addresses/:address/balance')
+  @ApiOperation({
+    summary: 'Get Stealth Address Balance',
+    description: 'Compute net balances per asset held in a stealth address.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Balance retrieved successfully',
+    type: [BalanceResponseDto],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Stealth address not found or does not belong to user',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid address format',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error during retrieval',
+  })
+  async getStealthAddressBalance(
+    @Request() req,
+    @Param() params: GetStealthAddressBalanceParamsDto,
+  ): Promise<BalanceResponseDto[]> {
+    const user = req.user;
+    return await this.stealthService.getStealthAddressBalance(
       user.userId,
       params.address,
     );

@@ -13,8 +13,9 @@ import { User } from '../users/entities/user.entity.js';
 
 import { MetaAddress } from './entities/meta-address.entity.js';
 import { StealthAddress } from './entities/stealth-address.entity.js';
-import { Transaction } from './entities/transaction.entity.js';
+import { Direction, Transaction } from './entities/transaction.entity.js';
 import {
+  BalanceResponseDto,
   CreateMetaAddressResponseDto,
   GetMetaAddressesQueryDto,
   GetMetaAddressesResponseDto,
@@ -311,6 +312,73 @@ export class StealthService {
       }
       throw new InternalServerErrorException(
         `Failed to retrieve transactions: ${error.message}`,
+      );
+    }
+  }
+
+  /**
+   * Get balance for a specific stealth address
+   */
+  async getStealthAddressBalance(
+    userId: string,
+    address: string,
+  ): Promise<BalanceResponseDto[]> {
+    try {
+      // First, resolve the stealth address and verify ownership
+      const stealthAddress = await this.stealthAddressRepository.findOne({
+        where: {
+          address,
+          metaAddress: {
+            user: { userId },
+          },
+        },
+        relations: ['metaAddress', 'metaAddress.user'],
+        select: {
+          stealthId: true,
+        },
+      });
+
+      if (!stealthAddress) {
+        throw new NotFoundException(
+          'Stealth address not found or does not belong to user',
+        );
+      }
+
+      // Use query builder to aggregate balances
+      const balanceResults = await this.transactionRepository
+        .createQueryBuilder('transaction')
+        .select([
+          'transaction.assetType as assetType',
+          'transaction.tokenAddress as tokenAddress',
+          `SUM(
+            CASE 
+              WHEN transaction.direction = :inDirection THEN transaction.amount 
+              ELSE -transaction.amount 
+            END
+          ) as balance`,
+        ])
+        .where('transaction.stealthId = :stealthId', {
+          stealthId: stealthAddress.stealthId,
+        })
+        .andWhere('transaction.amount IS NOT NULL')
+        .setParameter('inDirection', Direction.IN)
+        .groupBy('transaction.assetType, transaction.tokenAddress')
+        .having(
+          'SUM(CASE WHEN transaction.direction = :inDirection THEN transaction.amount ELSE -transaction.amount END) != 0',
+        )
+        .getRawMany();
+
+      return balanceResults.map((result) => ({
+        assetType: result.assetType,
+        tokenAddress: result.tokenAddress || null,
+        balance: result.balance.toString(),
+      }));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Failed to retrieve balance: ${error.message}`,
       );
     }
   }
