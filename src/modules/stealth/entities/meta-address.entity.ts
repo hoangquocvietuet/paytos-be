@@ -36,6 +36,9 @@ export class MetaAddress {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @OneToMany(() => StealthAddress, (stealth) => stealth.metaAddress)
+  @OneToMany(() => StealthAddress, (stealth) => stealth.metaAddress, {
+    cascade: true, // This ensures stealth addresses are deleted when meta-address is deleted
+    onDelete: 'CASCADE',
+  })
   stealthAddresses: StealthAddress[];
 }

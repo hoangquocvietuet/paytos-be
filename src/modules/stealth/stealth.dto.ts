@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { Type } from 'class-transformer';
-import { IsOptional, IsPositive, Max } from 'class-validator';
+import { IsOptional, IsPositive, IsUUID, Max } from 'class-validator';
 
 export class CreateMetaAddressResponseDto {
   @ApiProperty({
@@ -73,4 +73,13 @@ export class GetMetaAddressesResponseDto {
     total: number;
     totalPages: number;
   };
+}
+
+export class DeleteMetaAddressParamsDto {
+  @ApiProperty({
+    description: 'UUID of the meta-address to delete',
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  })
+  @IsUUID(4, { message: 'metaId must be a valid UUID' })
+  metaId: string;
 }

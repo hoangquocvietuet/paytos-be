@@ -30,9 +30,15 @@ export class StealthAddress {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @OneToMany(() => EphemeralKey, (eph) => eph.stealthAddress)
+  @OneToMany(() => EphemeralKey, (eph) => eph.stealthAddress, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   ephemeralKeys: EphemeralKey[];
 
-  @OneToMany(() => Transaction, (tx) => tx.stealthAddress)
+  @OneToMany(() => Transaction, (tx) => tx.stealthAddress, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   transactions: Transaction[];
 }

@@ -1,6 +1,10 @@
 import {
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
   Post,
   Query,
   Request,
@@ -17,6 +21,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
 import {
   CreateMetaAddressResponseDto,
+  DeleteMetaAddressParamsDto,
   GetMetaAddressesQueryDto,
   GetMetaAddressesResponseDto,
 } from './stealth.dto.js';
@@ -80,5 +85,36 @@ export class StealthController {
   ): Promise<GetMetaAddressesResponseDto> {
     const user = req.user;
     return await this.stealthService.getUserMetaAddresses(user.userId, query);
+  }
+
+  @Delete('meta/:metaId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Delete Meta-Address',
+    description:
+      "Revoke one of a user's meta-addresses; cleans up its stealth addresses & related data.",
+  })
+  @ApiResponse({
+    status: 204,
+    description: 'Meta-address deleted successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Meta-address not found or does not belong to user',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error during deletion',
+  })
+  async deleteMetaAddress(
+    @Request() req,
+    @Param() params: DeleteMetaAddressParamsDto,
+  ): Promise<void> {
+    const user = req.user;
+    await this.stealthService.deleteMetaAddress(user.userId, params.metaId);
   }
 }

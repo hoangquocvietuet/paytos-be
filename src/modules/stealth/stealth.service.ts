@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Ed25519PrivateKey } from '@aptos-labs/ts-sdk';
@@ -103,6 +107,38 @@ export class StealthService {
     } catch (error) {
       throw new InternalServerErrorException(
         `Failed to retrieve meta-addresses: ${error.message}`,
+      );
+    }
+  }
+
+  /**
+   * Delete a meta-address and all related data
+   */
+  async deleteMetaAddress(userId: string, metaId: string): Promise<void> {
+    try {
+      // First check if the meta-address exists and belongs to the user
+      const metaAddress = await this.metaAddressRepository.findOne({
+        where: {
+          metaId,
+          user: { userId },
+        },
+        relations: ['user'],
+      });
+
+      if (!metaAddress) {
+        throw new NotFoundException(
+          'Meta-address not found or does not belong to user',
+        );
+      }
+
+      // Delete the meta-address (cascade should handle related data)
+      await this.metaAddressRepository.remove(metaAddress);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Failed to delete meta-address: ${error.message}`,
       );
     }
   }
