@@ -16,6 +16,9 @@ function loadConfig() {
       secret: process.env.JWT_SECRET || 'your-secret-key',
       expiresIn: process.env.JWT_EXPIRES_IN || '24h',
     },
+    wallet: {
+      privateKey: process.env.PRIVATE_KEY || '',
+    },
   };
 
   return config;

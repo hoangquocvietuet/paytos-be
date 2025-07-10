@@ -5,6 +5,8 @@ import {
   AptosConfig,
   deserializePublicKey,
   deserializeSignature,
+  Ed25519PublicKey,
+  Ed25519Signature,
   Network,
 } from '@aptos-labs/ts-sdk';
 
@@ -97,8 +99,8 @@ export class AuthService {
     nonce: string,
   ): Promise<void> {
     try {
-      const publicKey = deserializePublicKey(aptosPublicKeyHex);
-      const signature = deserializeSignature(signatureHex);
+      const publicKey = new Ed25519PublicKey(aptosPublicKeyHex);
+      const signature = new Ed25519Signature(signatureHex);
       const message = this.nonceService.getNonceMessage(nonce);
 
       const isValid = await publicKey.verifySignatureAsync({
