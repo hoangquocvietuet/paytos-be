@@ -83,3 +83,88 @@ export class DeleteMetaAddressParamsDto {
   @IsUUID(4, { message: 'metaId must be a valid UUID' })
   metaId: string;
 }
+
+export class GetStealthAddressesQueryDto {
+  @ApiPropertyOptional({
+    description: 'Filter by specific meta-address UUID',
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  })
+  @IsOptional()
+  @IsUUID(4, { message: 'metaId must be a valid UUID' })
+  metaId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Page number (1-based)',
+    example: 1,
+    minimum: 1,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsPositive()
+  page?: number = 1;
+
+  @ApiPropertyOptional({
+    description: 'Number of items per page',
+    example: 10,
+    minimum: 1,
+    maximum: 100,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsPositive()
+  @Max(100)
+  limit?: number = 10;
+}
+
+export class StealthAddressResponseDto {
+  @ApiProperty({
+    description: 'Unique identifier for the stealth address',
+    example: 'a58bd21c-69dd-5483-b678-1f13c3d4e590',
+  })
+  stealthId: string;
+
+  @ApiProperty({
+    description: 'One-time stealth address (hex format)',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+    pattern: '^0x[0-9a-fA-F]{64}$',
+  })
+  address: string;
+
+  @ApiProperty({
+    description: 'View tag for efficient scanning (null if not set)',
+    example: 123,
+    nullable: true,
+  })
+  viewTag: number | null;
+
+  @ApiProperty({
+    description: 'ISO 8601 timestamp when the stealth address was created',
+    example: '2024-01-15T10:30:00.000Z',
+  })
+  createdAt: string;
+
+  @ApiProperty({
+    description: 'UUID of the parent meta-address',
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  })
+  metaId: string;
+}
+
+export class GetStealthAddressesResponseDto {
+  @ApiProperty({
+    description: 'Array of stealth addresses',
+    type: [StealthAddressResponseDto],
+  })
+  data: StealthAddressResponseDto[];
+
+  @ApiProperty({
+    description: 'Pagination metadata',
+  })
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}

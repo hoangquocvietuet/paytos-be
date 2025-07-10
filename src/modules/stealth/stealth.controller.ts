@@ -24,6 +24,8 @@ import {
   DeleteMetaAddressParamsDto,
   GetMetaAddressesQueryDto,
   GetMetaAddressesResponseDto,
+  GetStealthAddressesQueryDto,
+  GetStealthAddressesResponseDto,
 } from './stealth.dto.js';
 import { StealthService } from './stealth.service.js';
 
@@ -85,6 +87,36 @@ export class StealthController {
   ): Promise<GetMetaAddressesResponseDto> {
     const user = req.user;
     return await this.stealthService.getUserMetaAddresses(user.userId, query);
+  }
+
+  @Get('addresses')
+  @ApiOperation({
+    summary: 'List Stealth Addresses',
+    description:
+      'List every unique one-time address derived for a user, optionally filtered by meta-address.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Stealth addresses retrieved successfully',
+    type: GetStealthAddressesResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error during retrieval',
+  })
+  async getUserStealthAddresses(
+    @Request() req,
+    @Query() query: GetStealthAddressesQueryDto,
+  ): Promise<GetStealthAddressesResponseDto> {
+    const user = req.user;
+    return await this.stealthService.getUserStealthAddresses(
+      user.userId,
+      query,
+    );
   }
 
   @Delete('meta/:metaId')

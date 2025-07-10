@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EncryptionService } from '../../common/encryption.service.js';
@@ -19,7 +19,7 @@ import { StealthService } from './stealth.service.js';
       EphemeralKey,
       Transaction,
     ]),
-    AuthModule,
+    forwardRef(() => AuthModule),
   ],
   controllers: [StealthController],
   providers: [StealthService, EncryptionService],

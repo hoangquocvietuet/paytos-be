@@ -12,10 +12,14 @@ import { EncryptionService } from '../../common/encryption.service.js';
 import { User } from '../users/entities/user.entity.js';
 
 import { MetaAddress } from './entities/meta-address.entity.js';
+import { StealthAddress } from './entities/stealth-address.entity.js';
 import {
   CreateMetaAddressResponseDto,
   GetMetaAddressesQueryDto,
   GetMetaAddressesResponseDto,
+  GetStealthAddressesQueryDto,
+  GetStealthAddressesResponseDto,
+  StealthAddressResponseDto,
 } from './stealth.dto.js';
 
 @Injectable()
@@ -23,6 +27,8 @@ export class StealthService {
   constructor(
     @InjectRepository(MetaAddress)
     private readonly metaAddressRepository: Repository<MetaAddress>,
+    @InjectRepository(StealthAddress)
+    private readonly stealthAddressRepository: Repository<StealthAddress>,
     private readonly encryptionService: EncryptionService,
   ) {}
 
@@ -144,6 +150,68 @@ export class StealthService {
   }
 
   /**
+   * Get all stealth addresses for a user with optional meta-address filtering
+   */
+  async getUserStealthAddresses(
+    userId: string,
+    query: GetStealthAddressesQueryDto,
+  ): Promise<GetStealthAddressesResponseDto> {
+    try {
+      const { metaId, page = 1, limit = 10 } = query;
+      const skip = (page - 1) * limit;
+
+      // Build query conditions
+      const whereConditions: any = {
+        metaAddress: {
+          user: { userId },
+        },
+      };
+
+      // Add metaId filter if provided
+      if (metaId) {
+        whereConditions.metaAddress.metaId = metaId;
+      }
+
+      // Get stealth addresses with pagination
+      const [stealthAddresses, total] =
+        await this.stealthAddressRepository.findAndCount({
+          where: whereConditions,
+          relations: ['metaAddress', 'metaAddress.user'],
+          order: { createdAt: 'DESC' }, // Most recent first
+          skip,
+          take: limit,
+          select: {
+            stealthId: true,
+            address: true,
+            viewTag: true,
+            createdAt: true,
+            metaAddress: {
+              metaId: true,
+            },
+          },
+        });
+
+      const totalPages = Math.ceil(total / limit);
+
+      return {
+        data: stealthAddresses.map((stealthAddress) =>
+          this.mapToStealthAddressDto(stealthAddress),
+        ),
+        meta: {
+          page,
+          limit,
+          total,
+          totalPages,
+        },
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to retrieve stealth addresses: ${error.message}`,
+      );
+    }
+  }
+
+  /**
    * Generate an Ed25519 keypair using Aptos SDK
    */
   private generateKeyPair(): { privateKey: string; publicKey: string } {
@@ -171,6 +239,21 @@ export class StealthService {
       scanPublic: metaAddress.scanPublic,
       spendPublic: metaAddress.spendPublic,
       createdAt: metaAddress.createdAt.toISOString(),
+    };
+  }
+
+  /**
+   * Map StealthAddress entity to response DTO
+   */
+  private mapToStealthAddressDto(
+    stealthAddress: StealthAddress,
+  ): StealthAddressResponseDto {
+    return {
+      stealthId: stealthAddress.stealthId,
+      address: stealthAddress.address,
+      viewTag: stealthAddress.viewTag,
+      createdAt: stealthAddress.createdAt.toISOString(),
+      metaId: stealthAddress.metaAddress.metaId,
     };
   }
 }
