@@ -3,7 +3,7 @@ import { promisify } from 'util';
 
 import { Injectable } from '@nestjs/common';
 
-import { env } from '../config/index.js';
+import { env } from '../../config/index.js';
 
 @Injectable()
 export class EncryptionService {

@@ -153,7 +153,7 @@ describe('UsersService', () => {
       mockUsersRepository.findByUsername.mockResolvedValue(null);
       mockUsersRepository.update.mockResolvedValue(updatedUser);
 
-      const result = await service.updateUsername(updateUsernameDto);
+      const result = await service.updateUsername(updateUsernameDto.userId, updateUsernameDto.username);
 
       expect(result).toEqual(updatedUser);
       expect(repository.findById).toHaveBeenCalledWith('123e4567-e89b-12d3-a456-426614174000');
@@ -167,7 +167,7 @@ describe('UsersService', () => {
     it('should throw NotFoundException if user does not exist', async () => {
       mockUsersRepository.findById.mockResolvedValue(null);
 
-      await expect(service.updateUsername(updateUsernameDto)).rejects.toThrow(
+      await expect(service.updateUsername(updateUsernameDto.userId, updateUsernameDto.username)).rejects.toThrow(
         new NotFoundException('User with ID 123e4567-e89b-12d3-a456-426614174000 not found'),
       );
     });
@@ -177,7 +177,7 @@ describe('UsersService', () => {
       mockUsersRepository.findById.mockResolvedValue(mockUser);
       mockUsersRepository.findByUsername.mockResolvedValue(anotherUser);
 
-      await expect(service.updateUsername(updateUsernameDto)).rejects.toThrow(
+      await expect(service.updateUsername(updateUsernameDto.userId, updateUsernameDto.username)).rejects.toThrow(
         new BadRequestException('Username newusername is already taken'),
       );
     });
@@ -189,7 +189,7 @@ describe('UsersService', () => {
       mockUsersRepository.findByUsername.mockResolvedValue(mockUser);
       mockUsersRepository.update.mockResolvedValue(updatedUser);
 
-      const result = await service.updateUsername(updateDto);
+      const result = await service.updateUsername(updateDto.userId, updateDto.username);
 
       expect(result).toEqual(updatedUser);
     });

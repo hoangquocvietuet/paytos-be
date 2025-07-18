@@ -168,9 +168,10 @@ export class TestAssertions {
     expect(response.user).toHaveProperty('userId');
     expect(response.user).toHaveProperty('username');
     expect(response.user).toHaveProperty('aptosPublicKey');
-
+    expect(response.user).toHaveProperty('spendPublicKey');
     this.expectValidJwtToken(response.access_token);
     this.expectValidUuid(response.user.userId);
     this.expectValidAptosPublicKey(response.user.aptosPublicKey);
+    this.expectValidAptosPublicKey(response.user.spendPublicKey);
   }
 }

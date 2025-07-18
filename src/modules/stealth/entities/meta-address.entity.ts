@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { User } from 'src/modules/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity.js';
 
 import { StealthAddress } from './stealth-address.entity';
 
@@ -21,17 +21,14 @@ export class MetaAddress {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ length: 66 })
+  @Column({ length: 255 })
   scanPublic: string;
 
-  @Column({ length: 66 })
+  @Column({ length: 255 })
   spendPublic: string;
 
   @Column('text')
   scanPrivateEncrypted: string;
-
-  @Column('text')
-  spendPrivateEncrypted: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

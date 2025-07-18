@@ -6,6 +6,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import dataSource from './libs/typeORM.config.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { EncryptionModule } from './modules/encryption/encryption.module.js';
 import { StealthModule } from './modules/stealth/stealth.module.js';
 import { UsersModule } from './modules/users/users.module.js';
 
@@ -18,6 +19,7 @@ import { UsersModule } from './modules/users/users.module.js';
     AuthModule,
     UsersModule,
     StealthModule,
+    EncryptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

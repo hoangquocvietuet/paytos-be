@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { Type } from 'class-transformer';
 import {
+  IsNotEmpty,
   IsOptional,
   IsPositive,
   IsString,
@@ -9,6 +10,8 @@ import {
   Matches,
   Max,
 } from 'class-validator';
+
+import { User } from '../users/entities/user.entity.js';
 
 export class CreateMetaAddressResponseDto {
   @ApiProperty({
@@ -93,12 +96,22 @@ export class DeleteMetaAddressParamsDto {
 
 export class GetStealthAddressesQueryDto {
   @ApiPropertyOptional({
-    description: 'Filter by specific meta-address UUID',
-    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+    description: 'Aptos public key to filter stealth addresses',
+    example: '30f457a217333bdb6734f0c4d2c2ae1a3e5a7d6f1baf3e825',
   })
   @IsOptional()
-  @IsUUID(4, { message: 'metaId must be a valid UUID' })
-  metaId?: string;
+  @IsString()
+  aptosPublicKey?: string;
+
+  @ApiPropertyOptional({
+    description: 'On-chain stealth address (hex format)',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+    pattern: '^0x[0-9a-fA-F]{64}$',
+  })
+  @IsOptional()
+  @IsString()
+  address?: string;
 
   @ApiPropertyOptional({
     description: 'Page number (1-based)',
@@ -176,6 +189,45 @@ export class GetStealthAddressesResponseDto {
   };
 }
 
+export class CreateMetaAddressBodyDto {
+  @ApiProperty({
+    description: 'Aptos public key (hex format)',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+    pattern: '^0x[0-9a-fA-F]{64}$',
+  })
+  @IsString()
+  @IsNotEmpty()
+  aptosPublicKey: string;
+
+  @ApiProperty({
+    description: 'Spend public key (hex format)',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+  })
+  @IsString()
+  @IsNotEmpty()
+  spendPublicKey: string;
+
+  @ApiProperty({
+    description: 'Scan public key (hex format)',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+  })
+  @IsString()
+  @IsNotEmpty()
+  scanPublicKey: string;
+
+  @ApiProperty({
+    description: 'Scan private key (hex format)',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+  })
+  @IsString()
+  @IsNotEmpty()
+  scanPrivateKeyEncrypted: string;
+}
+
 export class GetStealthAddressParamsDto {
   @ApiProperty({
     description: 'On-chain stealth address (hex format)',
@@ -208,18 +260,10 @@ export class GetStealthAddressTransactionsParamsDto {
 
 export class TransactionResponseDto {
   @ApiProperty({
-    description: 'Transaction hash (hex format)',
-    example:
-      '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12',
-    pattern: '^0x[0-9a-fA-F]{66}$',
+    description: 'Stealth address',
+    example: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef12',
   })
-  txHash: string;
-
-  @ApiProperty({
-    description: 'ISO 8601 timestamp when the transaction occurred',
-    example: '2024-01-15T10:30:00.000Z',
-  })
-  timestamp: string;
+  stealthAddress: string;
 
   @ApiProperty({
     description: 'Direction of the transaction',
@@ -229,35 +273,10 @@ export class TransactionResponseDto {
   direction: 'IN' | 'OUT';
 
   @ApiProperty({
-    description: 'Type of asset transferred',
-    enum: ['coin', 'ft', 'nft'],
-    example: 'coin',
-  })
-  assetType: 'coin' | 'ft' | 'nft';
-
-  @ApiProperty({
-    description: 'Token contract address (for FT/NFT)',
-    example: '0xabcdef1234567890abcdef1234567890abcdef12',
-    required: false,
-    nullable: true,
-  })
-  tokenAddress?: string | null;
-
-  @ApiProperty({
-    description: 'Token ID (for NFT)',
-    example: '12345',
-    required: false,
-    nullable: true,
-  })
-  tokenId?: string | null;
-
-  @ApiProperty({
-    description: 'Amount transferred (as string to preserve precision)',
+    description: 'Amount transferred',
     example: '1000000000',
-    required: false,
-    nullable: true,
   })
-  amount?: string | null;
+  amount: string;
 }
 
 export class GetStealthAddressBalanceParamsDto {

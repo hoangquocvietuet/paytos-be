@@ -1,4 +1,13 @@
-import { Body, Controller, Put, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -8,7 +17,12 @@ import {
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js'; // Use simple JWT guard
 
-import { UpdateUsernameDto } from './users.dto.js';
+import {
+  CreateUserDto,
+  GetUserByPublicKeyDto,
+  GetUserByUsernameDto,
+  UpdateUsernameDto,
+} from './users.dto.js';
 import { UsersService } from './users.service.js';
 
 @ApiTags('Users')
@@ -44,5 +58,20 @@ export class UsersController {
       user.userId,
       updateUsernameDto.username,
     );
+  }
+
+  @Post('')
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return await this.usersService.createUser(createUserDto);
+  }
+
+  @Get('public-key')
+  async getUserByPublicKey(@Query() query: GetUserByPublicKeyDto) {
+    return await this.usersService.findByAptosPublicKey(query.aptosPublicKey);
+  }
+
+  @Get('username')
+  async getUserByUsername(@Query() query: GetUserByUsernameDto) {
+    return await this.usersService.findByUsername(query.username);
   }
 }

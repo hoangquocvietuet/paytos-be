@@ -21,7 +21,7 @@ export class StealthAddress {
   @JoinColumn({ name: 'meta_id' })
   metaAddress: MetaAddress;
 
-  @Column({ length: 64, unique: true })
+  @Column({ length: 255, unique: true })
   address: string;
 
   @Column({ type: 'smallint', nullable: true })
@@ -35,10 +35,4 @@ export class StealthAddress {
     onDelete: 'CASCADE',
   })
   ephemeralKeys: EphemeralKey[];
-
-  @OneToMany(() => Transaction, (tx) => tx.stealthAddress, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  transactions: Transaction[];
 }

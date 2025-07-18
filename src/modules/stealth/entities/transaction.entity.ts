@@ -21,31 +21,24 @@ export enum AssetType {
 
 @Entity('transactions')
 export class Transaction {
-  @PrimaryGeneratedColumn('uuid')
-  txId: string;
+  @Column({ length: 255, primary: true })
+  user_id: string;
 
-  @ManyToOne(() => StealthAddress, (stealth) => stealth.transactions)
-  @JoinColumn({ name: 'stealth_id' })
-  stealthAddress: StealthAddress;
+  @Column({ length: 255, primary: true })
+  sender_address: string;
 
-  @Column({ length: 66 })
-  txHash: string;
+  @Column({ length: 255, primary: true })
+  stealth_address: string;
 
-  @Column({ type: 'timestamp' })
-  timestamp: Date;
+  @Column({ length: 255 })
+  event_index: string;
+
+  @Column({ type: 'numeric' })
+  transaction_block_height: number;
 
   @Column({ type: 'enum', enum: Direction })
   direction: Direction;
 
-  @Column({ type: 'enum', enum: AssetType })
-  assetType: AssetType;
-
-  @Column({ type: 'text', nullable: true })
-  tokenAddress: string;
-
-  @Column({ type: 'text', nullable: true })
-  tokenId: string;
-
-  @Column({ type: 'numeric', nullable: true })
-  amount: number;
+  @Column({ type: 'text' })
+  amount: string;
 }

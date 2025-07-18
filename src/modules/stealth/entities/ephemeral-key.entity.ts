@@ -18,10 +18,10 @@ export class EphemeralKey {
   @JoinColumn({ name: 'stealth_id' })
   stealthAddress: StealthAddress;
 
-  @Column({ length: 64 })
+  @Column({ length: 255 })
   ephemeralKey: string;
 
-  @Column({ length: 66 })
+  @Column({ length: 255 })
   txHash: string;
 
   @Column('bigint')

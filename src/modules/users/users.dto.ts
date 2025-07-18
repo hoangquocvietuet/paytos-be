@@ -14,11 +14,8 @@ export class CreateUserDto {
   username: string;
 
   @ApiProperty({
-    description: 'Aptos public key in hexadecimal format (64 characters)',
-    example:
-      '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
-    pattern: '^0x[0-9a-fA-F]{64}$',
-    maxLength: 64,
+    description: 'Aptos public key in hexadecimal format',
+    maxLength: 120,
   })
   @IsString()
   @IsNotEmpty()
@@ -40,6 +37,28 @@ export class UpdateUsernameDto {
     example: 'alice_new_username_2024',
     minLength: 1,
     maxLength: 255,
+  })
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+}
+
+export class GetUserByPublicKeyDto {
+  @ApiProperty({
+    description: 'Aptos public key in hexadecimal format',
+    example:
+      '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+    maxLength: 120,
+  })
+  @IsString()
+  @IsNotEmpty()
+  aptosPublicKey: string;
+}
+
+export class GetUserByUsernameDto {
+  @ApiProperty({
+    description: 'Username of the user',
+    example: 'alice_crypto_2024',
   })
   @IsString()
   @IsNotEmpty()

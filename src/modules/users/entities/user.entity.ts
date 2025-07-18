@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { MetaAddress } from 'src/modules/stealth/entities/meta-address.entity';
+import { MetaAddress } from '../../stealth/entities/meta-address.entity.js';
 
 @Entity('users')
 export class User {
@@ -17,7 +17,7 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column({ length: 66 })
+  @Column({ length: 120 })
   aptosPublicKey: string;
 
   @CreateDateColumn({ type: 'timestamp' })
